@@ -5,6 +5,8 @@
 #include "../include/Action.h"
 #include "../include/Restaurant.h"
 
+extern Restaurant* backup;
+
 BaseAction::BaseAction():status(PENDING),errorMsg("") {
 }
 ActionStatus BaseAction::getStatus() const {
@@ -168,30 +170,16 @@ std::string BaseAction::getErrorMsg() const {
 PrintActionsLog::PrintActionsLog() {}
 
 void PrintActionsLog::act(Restaurant &restaurant) {
-    for(auto &it : restaurant.getActionsLog())
-        std::cout<< it->toString() << std::endl ;
+    for(BaseAction* b : restaurant.getActionsLog())
+        std::cout<< b->toString() << std::endl ;
 }
 
-BackupRestaurant::BackupRestaurant() {}
+BackupRestaurant::BackupRestaurant() {
+}
 
 void BackupRestaurant::act(Restaurant &restaurant) {
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Order::BaseAction() {}

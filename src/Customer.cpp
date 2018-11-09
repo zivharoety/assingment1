@@ -54,7 +54,6 @@ VegetarianCustomer::VegetarianCustomer(std::string name, int id): Customer(name,
 
 }
 
-
 void Customer::addToMyOrder(Dish *d) {
     myOrder.push_back(d);
 }
@@ -105,8 +104,10 @@ std::vector<int> VegetarianCustomer::order(const std::vector <Dish> &menu) {
     addCardinality();
     printMyCurrOrder(toReturn , menu);
     return toReturn ;
+}
 
-
+std::string VegetarianCustomer::toString() const {
+    return getName() + " " + std::to_string(getId()) ;
 }
 
 SpicyCustomer::SpicyCustomer(std::string name, int id):Customer(name,id,"spc") {}
@@ -165,8 +166,11 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
     return  toReturn;
 }
 
-CheapCustomer::CheapCustomer(std::string name, int id) : Customer( name,id,"chp")
-{};
+std::string SpicyCustomer::toString() const {
+    return getName() + " " + std::to_string(getId()) ;
+}
+
+CheapCustomer::CheapCustomer(std::string name, int id) : Customer( name,id,"chp") {};
 
 std::vector<int> CheapCustomer::order(const std::vector <Dish> &menu) {
     std::vector<int> toReturn;
@@ -191,9 +195,13 @@ std::vector<int> CheapCustomer::order(const std::vector <Dish> &menu) {
     printMyCurrOrder(toReturn,menu);
     return toReturn;
     }
-AlchoholicCustomer::AlchoholicCustomer(std::string name, int id): Customer(name,id,"alc") {
 
-};
+std::string CheapCustomer::toString() const {
+    return getName() + " " + std::to_string(getId()) ;
+}
+
+AlchoholicCustomer::AlchoholicCustomer(std::string name, int id): Customer(name,id,"alc") {};
+
 std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu) {
     std::vector<int> toReturn;
     int minID = -1;
@@ -236,7 +244,9 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu) {
     return toReturn;
 
 }
-
+std::string AlchoholicCustomer::toString() const {
+    return getName() + " " + std::to_string(getId()) ;
+}
 
 void Customer::printMyCurrOrder(const std::vector<int> dishes, const std::vector<Dish> &menu) {
     for(int id : dishes){

@@ -22,5 +22,16 @@ void Restaurant::start() {
     open = true;
 }
 
+Restaurant::Restaurant(Restaurant &rest): open(rest.open),dishcounter(rest.dishcounter)
+,customercounter(rest.customercounter),
+menu(rest.menu) {
+    for(Table* t : rest.tables){
+        Table* toAdd = new Table(*t);
+        tables.push_back(toAdd);
+    }
+
+}
+
+}
 
 

@@ -19,7 +19,7 @@ public:
     std::vector<Dish>& getMenu();
 	void closeRestaurant();
     std::vector<Table*> getAllTables() const;
-//    extern Restaurant* backup;
+    Restaurant(Restaurant& rest);
 
 
 private:
