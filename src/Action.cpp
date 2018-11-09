@@ -178,11 +178,28 @@ BackupRestaurant::BackupRestaurant() {
 }
 
 void BackupRestaurant::act(Restaurant &restaurant) {
+    backup = &restaurant;
+    complete();
+}
 
+std::string BackupRestaurant::toString() const {
+    return "backup " + getStatus();
+}
+
+RestoreResturant::RestoreResturant() {}
+
+void RestoreResturant::act(Restaurant &restaurant) {
+    if(backup == nullptr){
+        error("No backup available");
+        std::cout<<toString()<<std::endl;
+    }
+}
+
+std::string RestoreResturant::toString() const {
+    return "restore "+ std::to_string(getStatus()) + " " + getErrorMsg();
 }
 
 
-//Order::BaseAction() {}
 
 
 
