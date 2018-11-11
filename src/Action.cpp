@@ -194,7 +194,6 @@ void BackupRestaurant::act(Restaurant &restaurant) {
 
 
 
-//Order::BaseAction() {}
 
 
 

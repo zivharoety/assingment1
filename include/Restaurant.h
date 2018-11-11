@@ -6,6 +6,7 @@
 #include "Dish.h"
 #include "Table.h"
 #include "Action.h"
+#include <fstream>
 
 
 class Restaurant{		
@@ -19,11 +20,13 @@ public:
     std::vector<Dish>& getMenu();
 	void closeRestaurant();
     std::vector<Table*> getAllTables() const;
-//    extern Restaurant* backup;
-
+    void readAndSplit (const std::string& configFilePath);
+    void setTables (std::string s );
+    void setMenu (std::string s , int n);
 
 private:
     bool open;
+    int numOfTables;
     std::vector<Table*> tables;
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;
