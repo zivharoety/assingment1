@@ -67,7 +67,14 @@ void Table::order(const std::vector <Dish> &menu) {
 }
 
 
-Table::Table(const Table &table) : capacity(table.getCapacity()), open (table.open), customersList(table.customersList){ }
+
+Table::Table(const Table &table) : capacity(table.capacity), open (table.open){
+    for(Customer* c : table.customersList){
+        customersList.push_back(c->clone());
+    }
+}
+
+
 
 void Table::clear() {
     for(Customer* c : customersList){
@@ -75,12 +82,14 @@ void Table::clear() {
     }
 }
 
+
+
 Table& Table::operator=(const Table &other) {
     if(this != &other) {
         this->clear();
         this->customersList = other.customersList;
         this->open = other.open;
-    }
+    } // should we make new customers ?
     return *this;
 }
 
@@ -92,12 +101,13 @@ std::vector<OrderPair>& Table::getOrders() {
     std::vector<OrderPair> toReturn;
     for(Customer* c : customersList){
         const Customer& temp = *c; //is it copy or assignment
-        for(Dish* d : c->getMyOrder()){
-            OrderPair toAdd(c->getId(),*d);
+        for(Dish d : c->getMyOrder()){
+            OrderPair toAdd(c->getId(),d);
             toReturn.push_back(toAdd);
         }
 
     }
+    return toReturn;
 }
 bool Table::isThere(int id)  {
     return getCustomer(id) != nullptr;
