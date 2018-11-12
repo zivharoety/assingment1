@@ -41,12 +41,7 @@ std::string OpenTable::toString() const {
 
     return s + " " + std::to_string(getStatus()) +" "+getErrorMsg();
 }
-int OpenTable::getTableId() const {
-    return tableId;
-}
-std::vector<Customer *> OpenTable::getCustomers() const {
-    return customers;
-}
+
 OpenTable* OpenTable::clone() const {
     std::vector<Customer *> cl = customers;
     OpenTable* toReturn = new OpenTable(tableId,cl);

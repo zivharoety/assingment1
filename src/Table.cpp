@@ -86,7 +86,7 @@ Table& Table::operator=(const Table &other) {
         this->clear();
         this->customersList = other.customersList;
         this->open = other.open;
-    }
+    } // should we make new customers ?
     return *this;
 }
 
@@ -104,6 +104,7 @@ std::vector<OrderPair>& Table::getOrders() {
         }
 
     }
+    return toReturn;
 }
 bool Table::isThere(int id)  {
     return getCustomer(id) != nullptr;

@@ -37,12 +37,10 @@ public:
     void act(Restaurant &restaurant);
     std::string toString() const;
 	OpenTable* clone() const ;
-	int getTableId() const;
-	std::vector<Customer *> getCustomers() const;
 
 private:
 	const int tableId;
-	const std::vector<Customer *> customers;
+	std::vector<Customer *> customers;
 };
 
 
