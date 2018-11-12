@@ -20,6 +20,8 @@ public:
 	void closeRestaurant();
     std::vector<Table*> getAllTables() const;
     Restaurant operator=(Restaurant& rest);
+    void clear();
+	~Restaurant();
 
 
 private:

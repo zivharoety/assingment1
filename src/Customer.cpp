@@ -5,7 +5,7 @@
 #include "../include/Customer.h"
 
 
-Customer::Customer(std::string c_name, int c_id, std::string t): name(c_name),id(c_id),numberOfOrders(0),bill(0),type(t) {}
+//Customer::Customer(std::string c_name, int c_id, std::string t): name(c_name),id(c_id),numberOfOrders(0),bill(0),type(t) {}
 
 Customer::Customer( std::string  c_name, int c_id):name(c_name),id(c_id),numberOfOrders(0),bill(0) {}
 const std::string & Customer::getName() const {
@@ -34,6 +34,13 @@ const std::vector<Dish*> Customer::getMyOrder() const {
     return myOrder;
 }
 
+void Customer::setType(std::string t) {
+    type = t;
+}
+std::string Customer::getType() const {
+    return type;
+}
+
  Customer& Customer::operator=(const Customer &customer) {
     if (this != &customer) {
         this->bill = customer.getBill();
@@ -50,15 +57,25 @@ myOrder(customer.getMyOrder()) {}
 
 
 
-VegetarianCustomer::VegetarianCustomer(std::string name, int id): Customer(name,id,"veg") {
-
+VegetarianCustomer::VegetarianCustomer(std::string name, int id): Customer(name,id) {
+    this->setType("veg");
 }
 
 void Customer::addToMyOrder(Dish *d) {
     myOrder.push_back(d);
 }
 
-
+VegetarianCustomer* VegetarianCustomer::clone() const {
+    VegetarianCustomer* toReturn = new VegetarianCustomer(this->getName(),this->getId()) ;
+    for(Dish* d : this->getMyOrder()){
+        toReturn->addToMyOrder(d);
+    }
+    for(int i=0; i<this->getNumberOfOrder();i++){
+        toReturn->addCardinality();
+    }
+    toReturn->addToBill(this->getBill());
+    return toReturn;
+}
 
 std::vector<int> VegetarianCustomer::order(const std::vector <Dish> &menu) {
 
@@ -110,7 +127,10 @@ std::string VegetarianCustomer::toString() const {
     return getName() + " " + std::to_string(getId()) ;
 }
 
-SpicyCustomer::SpicyCustomer(std::string name, int id):Customer(name,id,"spc") {}
+SpicyCustomer::SpicyCustomer(std::string name, int id):Customer(name,id) {
+    this->setType("spc");
+
+}
 
 std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
     std::vector<int> toReturn;
@@ -170,7 +190,32 @@ std::string SpicyCustomer::toString() const {
     return getName() + " " + std::to_string(getId()) ;
 }
 
-CheapCustomer::CheapCustomer(std::string name, int id) : Customer( name,id,"chp") {};
+SpicyCustomer* SpicyCustomer::clone() const {
+    SpicyCustomer* toReturn = new SpicyCustomer(this->getName(),this->getId()) ;
+    for(Dish* d : this->getMyOrder()){
+        toReturn->addToMyOrder(d);
+    }
+    for(int i=0; i<this->getNumberOfOrder();i++){
+        toReturn->addCardinality();
+    }
+    toReturn->addToBill(this->getBill());
+    return toReturn;
+}
+CheapCustomer::CheapCustomer(std::string name, int id) : Customer(name,id) {
+    this->setType("chp");
+};
+
+CheapCustomer* CheapCustomer::clone() const {
+    CheapCustomer* toReturn = new CheapCustomer(this->getName(),this->getId()) ;
+    for(Dish* d : this->getMyOrder()){
+        toReturn->addToMyOrder(d);
+    }
+    for(int i=0; i<this->getNumberOfOrder();i++){
+        toReturn->addCardinality();
+    }
+    toReturn->addToBill(this->getBill());
+    return toReturn;
+}
 
 std::vector<int> CheapCustomer::order(const std::vector <Dish> &menu) {
     std::vector<int> toReturn;
@@ -200,7 +245,9 @@ std::string CheapCustomer::toString() const {
     return getName() + " " + std::to_string(getId()) ;
 }
 
-AlchoholicCustomer::AlchoholicCustomer(std::string name, int id): Customer(name,id,"alc") {};
+AlchoholicCustomer::AlchoholicCustomer(std::string name, int id): Customer(name,id) {
+    this->setType("alc");
+};
 
 std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu) {
     std::vector<int> toReturn;
@@ -248,6 +295,18 @@ std::string AlchoholicCustomer::toString() const {
     return getName() + " " + std::to_string(getId()) ;
 }
 
+AlchoholicCustomer* AlchoholicCustomer::clone() const {
+    AlchoholicCustomer* toReturn = new AlchoholicCustomer(this->getName(),this->getId()) ;
+    for(Dish* d : this->getMyOrder()){
+        toReturn->addToMyOrder(d);
+    }
+    for(int i=0; i<this->getNumberOfOrder();i++){
+        toReturn->addCardinality();
+    }
+    toReturn->addToBill(this->getBill());
+    return toReturn;
+}
+
 void Customer::printMyCurrOrder(const std::vector<int> dishes, const std::vector<Dish> &menu) {
     for(int id : dishes){
         for(Dish d : menu){
@@ -257,6 +316,4 @@ void Customer::printMyCurrOrder(const std::vector<int> dishes, const std::vector
         }
     }
 }
-std::string Customer::getType() const {
-    return type;
-}
+

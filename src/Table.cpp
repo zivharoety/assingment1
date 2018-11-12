@@ -69,25 +69,11 @@ void Table::order(const std::vector <Dish> &menu) {
 
 Table::Table(const Table &table) : capacity(table.getCapacity()), open (table.open){
     for(Customer* c : table.customersList){
-        if(c->getType() == "veg"){
-           VegetarianCustomer* toAdd = new VegetarianCustomer(c->getName(),c->getId()) ;
-            customersList.push_back(toAdd);
-        }
-        else if(c->getType() == "alc"){
-            AlchoholicCustomer* toAdd = new AlchoholicCustomer(c->getName(),c->getId());
-            customersList.push_back(toAdd);
-        }
-        else if(c->getType() == "spc"){
-            SpicyCustomer* toAdd = new SpicyCustomer(c->getName(),c->getId());
-            customersList.push_back(toAdd);
-        }
-        else if(c->getType()=="chp"){
-            CheapCustomer* toAdd = new CheapCustomer(c->getName(),c->getId());
-            customersList.push_back(toAdd);
-        }
-
+        Customer* toAdd = c->clone();
+        customersList.push_back(toAdd);
     }
-}
+    }
+
 
 void Table::clear() {
     for(Customer* c : customersList){

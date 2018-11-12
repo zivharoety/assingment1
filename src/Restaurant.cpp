@@ -22,22 +22,36 @@ void Restaurant::start() {
     open = true;
 }
 
+void Restaurant::clear() {
+for(Table* t : tables){
+    delete t ;
+}
+for(BaseAction* b : actionsLog){
+    delete b ;}
+}
+
 Restaurant Restaurant::operator=(Restaurant &rest) {
+    clear();
     open = rest.open;
     dishcounter = rest.dishcounter;
     customercounter = rest.customercounter;
-    menu = rest.menu;
-    for(Table* t : rest.tables){
-        Table* toAdd = new Table(*t);
+    for(Dish d : rest.menu){
+        menu.push_back(d);
+    }
+    for (Table *t : rest.tables) {
+        Table *toAdd = new Table(*t);
         tables.push_back(toAdd);
+        for (BaseAction *b : rest.getActionsLog()) {
+            actionsLog.push_back(b->clone());
+        }
+
 
     }
-    /*
-     to add the copy of the action log
-     */
 
 }
 
+Restaurant::~Restaurant() {
+    clear();
 }
 
 
