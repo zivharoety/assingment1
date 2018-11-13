@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
         std::cout << argv[2] << endl;
         return 0;
     }  */
- std::cout<<"hey"<<std::endl;
+
 
     Restaurant rest = Restaurant("/users/studs/bsc/2019/guyof/CLionProjects/untitled/config/config1.txt");
     rest.start();

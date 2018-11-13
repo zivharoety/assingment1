@@ -4,7 +4,50 @@ Restaurant::Restaurant(const std::string &configFilePath): dishcounter(0),custom
     Restaurant::readAndSplit(configFilePath);
 }
 
-Restaurant::Restaurant(): dishcounter(1),customercounter(1) {}
+Restaurant::Restaurant(): dishcounter(0),customercounter(0) {}
+
+Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter), customercounter(other.customercounter) {
+    for(Table * t : other.tables){
+        tables.push_back(t->clone());
+    }
+    for(BaseAction* b : other.actionsLog){
+        actionsLog.push_back(b->clone());
+    }
+    for(Dish d : other.menu){
+        menu.push_back(d);
+    } //to check
+
+}
+
+Restaurant::Restaurant(Restaurant &&other): numOfTables(other.numOfTables), open(other.open),tables(other.tables),actionsLog(other.actionsLog) {
+    for(int i = 0 ; i<other.tables.size();i++){
+        other.tables.at(i) = nullptr;
+    }
+    for(int i = 0 ; i<other.actionsLog.size();i++){
+        other.actionsLog.at(i) = nullptr;
+    }
+    other.clear();
+}
+
+Restaurant& Restaurant::operator=(Restaurant &&rest) {
+    clear();
+    tables = rest.tables;
+    actionsLog = rest.actionsLog;
+    open = rest.open;
+    for(Dish d : rest.menu){
+        menu.push_back(d);
+    }
+    dishcounter = rest.dishcounter;
+    customercounter = rest.customercounter;
+    for(int i = 0 ; i<rest.tables.size();i++){
+        rest.tables.at(i) = nullptr;
+    }
+    for(int i = 0 ; i<rest.actionsLog.size();i++){
+        rest.actionsLog.at(i) = nullptr;
+    }
+    rest.clear();
+
+}
 
 std::vector<Dish> & Restaurant::getMenu() {
     return this->menu;
@@ -26,22 +69,34 @@ void Restaurant::start() {
     open = true;
     std::cout<<"Restaurant is now open!"<<std::endl;
     std::string line;
-     Aopen("2 Alice,spc Bob,alc");//~for debugging
-     Aopen("3 Guy,chp");
-     Aorder("2");
-     Aorder("2");
-    Aorder("2");
-    Amove("2 3 1");
 
-   /* while(open) {
-        std::getline(std::cin , line);
-        if(line.substr(0,line.find_first_of(' '))=="open")
-            Aopen(line.substr(line.find_first_of(' ')+1));
-        if(line.substr(0,line.find_first_of(' '))=="order")
+
+
+    while(open) {
+        getline(std::cin, line);
+
+        if (line.substr(0, line.find_first_of(' ')).compare("open") == 0) {
+            Aopen(line.substr(line.find_first_of(' ') + 1)); }
+        if(line.substr(0,line.find_first_of(' ')).compare("order")==0)
             Aorder(line.substr(line.find_first_of(' ')+1));
-        if(line.substr(0,line.find_first_of(' '))=="move")
+        if(line.substr(0,line.find_first_of(' ')).compare("move")==0)
             Amove(line.substr(line.find_first_of(' ')+1));
-    } */
+        if(line.substr(0,line.find_first_of(' ')).compare("close")==0)
+            Aclose(line.substr(line.find_first_of(' ')+1));
+        if(line.substr(0,line.find_first_of(' ')).compare("closeall")==0)
+            AcloseAll();
+        if(line.substr(0,line.find_first_of(' ')).compare("menu")==0)
+            Amenu();
+        if(line.substr(0,line.find_first_of(' ')).compare("status")==0)
+            Astatus(line.substr(line.find_first_of(' ')+1));
+        if(line.substr(0,line.find_first_of(' ')).compare("log")==0)
+            Alog();
+        if(line.substr(0,line.find_first_of(' ')).compare("backup")==0)
+            Abackup();
+        if(line.substr(0,line.find_first_of(' ')).compare("restore")==0)
+            Arestore();
+   }
+
 
 }
 
@@ -49,11 +104,22 @@ void Restaurant::clear() {
 for(Table* t : tables){
     delete t ;
 }
+for(Table* t : tables){
+    tables.pop_back();
+}
+for(BaseAction* b : actionsLog) {
+    delete b;
+}
+for(Dish d : menu){
+    menu.pop_back();
+}
 for(BaseAction* b : actionsLog){
-    delete b ;}
+    actionsLog.pop_back();
 }
 
- void Restaurant::operator=(Restaurant &rest) {
+}
+
+Restaurant& Restaurant::operator=(Restaurant &rest) {
     clear();
     open = rest.open;
     dishcounter = rest.dishcounter;
@@ -62,14 +128,13 @@ for(BaseAction* b : actionsLog){
         menu.push_back(d);
     }
     for (Table *t : rest.tables) {
-        Table *toAdd = new Table(*t);
-        tables.push_back(toAdd);
+        tables.push_back(t->clone());
     }
-     for (BaseAction *b : getActionsLog()) {
+     for (BaseAction *b : rest.getActionsLog()) {
          actionsLog.push_back(b->clone());
      }
 
-     //   return this ;
+       return *this ;
 }
 void Restaurant::readAndSplit(const std::string &configFilePath) {
     std::ifstream file;
@@ -130,6 +195,7 @@ void Restaurant::setMenu(std::string s , int n) {
     int price = std::stoi(s);
     Dish *toAdd = new Dish(n, name, price, type);
     menu.push_back(*toAdd);
+
 }
 
 Restaurant::~Restaurant() {
@@ -211,4 +277,45 @@ void Restaurant::Amove(std::string s) {
     actionsLog.push_back(toMove);
 }
 
+void Restaurant::Aclose(std::string s) {
+    int tableId = std::stoi(s);
+    Close* c = new Close(tableId);
+    c->act(*this);
+    actionsLog.push_back(c);
+}
 
+void Restaurant::AcloseAll() {
+    CloseAll* ca = new CloseAll();
+    ca->act(*this);
+    actionsLog.push_back(ca);
+}
+
+void Restaurant::Amenu() {
+    PrintMenu* m = new PrintMenu();
+    m->act(*this);
+    actionsLog.push_back(m);
+}
+
+void Restaurant::Astatus(std::string s) {
+    int tableID = std::stoi(s);
+    PrintTableStatus* ps = new PrintTableStatus(tableID);
+    ps->act(*this);
+    actionsLog.push_back(ps);
+}
+void Restaurant::Alog() {
+    PrintActionsLog* log = new PrintActionsLog();
+    log->act(*this);
+    actionsLog.push_back(log);
+}
+
+void Restaurant::Abackup() {
+    BackupRestaurant* bk = new BackupRestaurant();
+    bk->act(*this);
+    actionsLog.push_back(bk);
+}
+
+void Restaurant::Arestore() {
+    RestoreResturant* restore = new RestoreResturant();
+    restore->act(*this);
+    actionsLog.push_back(restore);
+}

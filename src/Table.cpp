@@ -1,12 +1,35 @@
 #include "../include/Table.h"
 
-using namespace std;
 
 
 Table::Table(int t_capacity) {
     capacity = t_capacity;
 }
 
+
+Table& Table::operator=(const Table &other) {
+    if(this != &other) {
+        this->clear();
+        this->customersList = other.customersList;
+        this->open = other.open;
+    } // should we make new customers ? to change !
+    return *this;
+}
+Table::Table(Table &&other): capacity(other.capacity),open(other.open),customersList(other.customersList) {
+    for(int i = 0 ; i < other.customersList.size() ; i ++){
+        other.customersList.at(i) = nullptr ;
+    }
+}
+
+Table& Table::operator=(Table &&other) {
+    clear();
+    capacity = other.capacity;
+    open = other.open;
+    customersList = other.customersList;
+    for(int i = 0 ; i < other.customersList.size() ; i ++){
+        other.customersList.at(i) = nullptr ;
+    }
+}
 Customer* Table::getCustomer(int id) {
     for(Customer* c : customersList){
         if(c->getId()==id){
@@ -84,14 +107,6 @@ void Table::clear() {
 
 
 
-Table& Table::operator=(const Table &other) {
-    if(this != &other) {
-        this->clear();
-        this->customersList = other.customersList;
-        this->open = other.open;
-    } // should we make new customers ?
-    return *this;
-}
 
 Table::~Table() {
     clear();
@@ -112,6 +127,15 @@ std::vector<OrderPair>& Table::getOrders() {
 bool Table::isThere(int id)  {
     return getCustomer(id) != nullptr;
 
+}
+
+Table* Table::clone() {
+    Table * toReturn = new Table(capacity);
+    toReturn->open = this->open;
+    for(Customer * c : customersList){
+        toReturn->addCustomer(c->clone());
+    }
+    return toReturn;
 }
 
 
