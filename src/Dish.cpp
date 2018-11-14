@@ -23,6 +23,23 @@ DishType Dish::getType() const {
 	return this->type;
 }
 
+std::string Dish::getTypeName() {
+	if(getType()==VEG){
+		return "VEG";
+	}
+	if(getType()==SPC){
+		return "SPC";
+	}
+	if(getType()==BVG){
+		return "BVG";
+	}
+	if(getType()==ALC){
+		return "ALC";
+	}
+
+}
+Dish::~Dish() {}
+
 
 
 

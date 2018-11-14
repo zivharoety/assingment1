@@ -10,9 +10,14 @@ typedef std::pair<int, Dish> OrderPair;
 class Table{
 public:
     Table(int t_capacity);
+    Table(const Table &table);
+    Table & operator=(const Table &table);
+    Table &operator=(Table &&other);
+    Table(Table &&other);
     int getCapacity() const;
     void addCustomer(Customer* customer);
     void removeCustomer(int id);
+    Table* clone();
     Customer* getCustomer(int id);
     std::vector<Customer*>& getCustomers();
     std::vector<OrderPair>& getOrders();
@@ -21,8 +26,6 @@ public:
     void closeTable();
     int getBill();
     bool isOpen();
-    Table(const Table &table);
-    Table & operator=(const Table &table);
     void clear();
     ~Table();
     bool isThere(int id);
