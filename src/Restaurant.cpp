@@ -6,7 +6,7 @@ Restaurant::Restaurant(const std::string &configFilePath): dishcounter(0),custom
 
 Restaurant::Restaurant(): dishcounter(0),customercounter(0) {}
 
-Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter), customercounter(other.customercounter) {
+Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter), customercounter(other.customercounter),open(other.open) {
     for(Table * t : other.tables){
         tables.push_back(t->clone());
     }

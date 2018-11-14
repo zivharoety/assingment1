@@ -28,7 +28,7 @@ void OpenTable::act(Restaurant &restaurant) {
         restaurant.getTable(this->tableId)->isOpen() |
         restaurant.getTable(this->tableId)->getCapacity() < this->customers.size()) {
         error("Table is already open or does not exist");
-        std::cout<<getErrorMsg()<<std::endl; 
+        std::cout<<getErrorMsg()<<std::endl;
         for(Customer * c : customers){
             delete c;
         }
@@ -39,7 +39,7 @@ void OpenTable::act(Restaurant &restaurant) {
     Table* t = restaurant.getTable(tableId);
     t->openTable();
     for(Customer* c : customers){
-        t->addCustomer(c);
+        t->addCustomer(c->clone());
         s = s + " " + c->getName() + ","+c->getType();
     }
     setString(s);
@@ -56,12 +56,18 @@ void OpenTable::setString(std::string s) {
     desc = s;
 }
 OpenTable::~OpenTable() {
-    customers.clear();
-    desc = nullptr;
+   for(Customer * c : customers){
+       delete c;
+   };
+
 }
 OpenTable* OpenTable::clone() const {
-    std::vector<Customer *> cl = customers;
+    std::vector<Customer *> cl ;
+    for(Customer * c : customers){
+        cl.push_back(c->clone());
+    }
     OpenTable* toReturn = new OpenTable(tableId,cl);
+    toReturn->setString(desc);
     if(this->getStatus() == ERROR){
         toReturn->error(this->getErrorMsg());
     }
