@@ -21,6 +21,7 @@ Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter),
 
 Restaurant::Restaurant(Restaurant &&other): numOfTables(other.numOfTables), open(other.open),tables(other.tables),actionsLog(other.actionsLog) {
     for(int i = 0 ; i<other.tables.size();i++){
+
         other.tables.at(i) = nullptr;
     }
     for(int i = 0 ; i<other.actionsLog.size();i++){
@@ -104,19 +105,12 @@ void Restaurant::clear() {
 for(Table* t : tables){
     delete t ;
 }
-for(Table* t : tables){
-    tables.pop_back();
-}
+tables.clear();
 for(BaseAction* b : actionsLog) {
     delete b;
 }
-for(Dish d : menu){
-    menu.pop_back();
-}
-for(BaseAction* b : actionsLog){
-    actionsLog.pop_back();
-}
-
+menu.clear();
+actionsLog.clear();
 }
 
 Restaurant& Restaurant::operator=(Restaurant &rest) {
@@ -187,15 +181,13 @@ void Restaurant::setTables(std::string s) {
 
 
 void Restaurant::setMenu(std::string s , int n) {
-    int i = static_cast<unsigned>(s.find_first_of(','));
-    std::string name = s.substr(0, (static_cast<unsigned>(i)));
+    unsigned int i = (s.find_first_of(','));
+    std::string name = s.substr(0, i);
     s = s.substr(i+1);
     DishType type =  stringToType(s.substr(0,s.find_first_of(',')));
     s = s.substr(s.find_first_of(',')+1);
     int price = std::stoi(s);
-    Dish *toAdd = new Dish(n, name, price, type);
-    menu.push_back(*toAdd);
-
+    menu.push_back(Dish(n, name, price, type));
 }
 
 Restaurant::~Restaurant() {

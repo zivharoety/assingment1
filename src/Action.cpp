@@ -10,6 +10,8 @@ extern Restaurant* backup;
 BaseAction::BaseAction():status(PENDING),errorMsg("") {
 }
 
+BaseAction::~BaseAction() {}
+
 void BaseAction::setStatus(ActionStatus a) {
     status = a ;
 }
@@ -26,26 +28,37 @@ void OpenTable::act(Restaurant &restaurant) {
         restaurant.getTable(this->tableId)->isOpen() |
         restaurant.getTable(this->tableId)->getCapacity() < this->customers.size()) {
         error("Table is already open or does not exist");
-        std::cout<<getErrorMsg()<<std::endl;
+        std::cout<<getErrorMsg()<<std::endl; 
+        for(Customer * c : customers){
+            delete c;
+        }
+        customers.clear();
         return;
     }
+    std::string s = "";
     Table* t = restaurant.getTable(tableId);
     t->openTable();
     for(Customer* c : customers){
         t->addCustomer(c);
+        s = s + " " + c->getName() + ","+c->getType();
     }
+    setString(s);
     complete();
 
 }
 std::string OpenTable::toString() const {
     std::string s = "open "+ std::to_string(tableId);
-    for(Customer* c : customers){
-        s = s + " " + c->getName() + ","+c->getType();
-    }
 
-    return s + " " + getStringStatus() +" "+getErrorMsg();
+    return s +desc+" "+ getStringStatus() +" "+getErrorMsg();
 }
 
+void OpenTable::setString(std::string s) {
+    desc = s;
+}
+OpenTable::~OpenTable() {
+    customers.clear();
+    desc = nullptr;
+}
 OpenTable* OpenTable::clone() const {
     std::vector<Customer *> cl = customers;
     OpenTable* toReturn = new OpenTable(tableId,cl);
@@ -140,8 +153,9 @@ void Close::act(Restaurant &restaurant) {
     }
     int bill = restaurant.getTable(tableId)->getBill();
     for(Customer* c : restaurant.getTable(tableId)->getCustomers()){
-        delete(c);
+        delete c;
     }
+    restaurant.getTable(tableId)->getCustomers().clear();
     restaurant.getTable(tableId)->closeTable();
     std::cout<<"Table "<<tableId<<" was closed. Bill "<<bill<<"NIS"<< std::endl;
     complete();

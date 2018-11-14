@@ -15,6 +15,7 @@ class Restaurant;
 class BaseAction{
 public:
     BaseAction();
+    virtual ~BaseAction();
     ActionStatus getStatus() const;
     std::string getStringStatus() const ;
     virtual void act(Restaurant& restaurant)=0;
@@ -38,8 +39,11 @@ public:
     void act(Restaurant &restaurant);
     std::string toString() const;
 	OpenTable* clone() const ;
+	void setString(std::string s);
+	~OpenTable();
 
 private:
+    std::string desc ;
 	const int tableId;
 	std::vector<Customer *> customers;
 };

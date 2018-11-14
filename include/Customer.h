@@ -29,7 +29,7 @@ public:
     Customer & operator=(const Customer &customer);
     const std::vector<Dish> getMyOrder() const;
     void addToMyOrder(Dish d) ;
-    ~Customer();
+    virtual ~Customer();
     void printMyCurrOrder(const std::vector<int> dishes, const std::vector<Dish> &menu);
 
 

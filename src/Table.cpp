@@ -124,6 +124,7 @@ std::vector<OrderPair>& Table::getOrders() {
     }
     return toReturn;
 }
+
 bool Table::isThere(int id)  {
     return getCustomer(id) != nullptr;
 
