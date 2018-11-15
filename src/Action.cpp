@@ -24,9 +24,9 @@ OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id)
 }
 
 void OpenTable::act(Restaurant &restaurant) {
-    if (restaurant.getNumOfTables()<tableId ||
-        restaurant.getTable(this->tableId)->isOpen() |
-        restaurant.getTable(this->tableId)->getCapacity() < this->customers.size()) {
+    if ((restaurant.getNumOfTables()<tableId) ||
+        (restaurant.getTable(this->tableId)->isOpen()) |
+        (((unsigned)restaurant.getTable(this->tableId)->getCapacity()) < ((unsigned)this->customers.size()))) {
         error("Table is already open or does not exist");
         std::cout<<getErrorMsg()<<std::endl;
         for(Customer * c : customers){
@@ -82,7 +82,7 @@ OpenTable* OpenTable::clone() const {
 Order::Order(int id): tableId(id) {
 }
 void Order::act(Restaurant &restaurant) {
-    if(tableId > restaurant.getNumOfTables() | !restaurant.getTable(tableId)->isOpen()){
+    if(((tableId) > (restaurant.getNumOfTables())) | (!restaurant.getTable(tableId)->isOpen())){
         error("Table Does not exist or is not open");
         std::cout<<"Table Does not exist or is not open"<<std::endl;
     }
@@ -127,12 +127,12 @@ MoveCustomer* MoveCustomer::clone() const {
     return toReturn;
 }
 void MoveCustomer::act(Restaurant &restaurant) {
-    if(srcTable>restaurant.getNumOfTables() ||
-    dstTable>restaurant.getNumOfTables() ||
-    !restaurant.getTable(srcTable)->isOpen() |
-    !restaurant.getTable(dstTable)->isOpen() |
-    restaurant.getTable(dstTable)->getCustomers().size()+1 > restaurant.getTable(dstTable)->getCapacity()|
-    !restaurant.getTable(srcTable)->isThere(id))
+    if((((unsigned) srcTable) > ((unsigned) restaurant.getNumOfTables())) ||
+    (((unsigned)  dstTable) > ((unsigned) restaurant.getNumOfTables()) )||
+    (!restaurant.getTable(srcTable)->isOpen()) |
+    (!restaurant.getTable(dstTable)->isOpen()) |
+    (((unsigned) restaurant.getTable(dstTable)->getCustomers().size()+1) > ((unsigned) restaurant.getTable(dstTable)->getCapacity()))|
+    (!restaurant.getTable(srcTable)->isThere(id)))
      {
         std::cout << "Cannot move customer"<<std::endl;
         error("Cannot move customer");
@@ -142,7 +142,7 @@ void MoveCustomer::act(Restaurant &restaurant) {
         Customer* toMove = restaurant.getTable(srcTable)->getCustomer(id);
         restaurant.getTable(dstTable)->addCustomer(toMove);
         restaurant.getTable(srcTable)->removeCustomer(id);
-        if(restaurant.getTable(srcTable)->getCustomers().size() == 0){
+        if((unsigned) restaurant.getTable(srcTable)->getCustomers().size() == 0){
             restaurant.getTable(srcTable)->closeTable();
          }
     complete();
@@ -151,8 +151,9 @@ void MoveCustomer::act(Restaurant &restaurant) {
 }
 
 Close::Close(int id): tableId(id){};
+
 void Close::act(Restaurant &restaurant) {
-    if(tableId>restaurant.getNumOfTables() ||!restaurant.getTable(tableId)->isOpen()){
+    if((tableId) > (restaurant.getNumOfTables()) ||(!restaurant.getTable(tableId)->isOpen())){
         std::cout<<"Table does not exist or is not open"<< std::endl;
         error("Table does not exist or is not open");
         return;
@@ -185,7 +186,7 @@ std::string Close::toString() const {
 CloseAll::CloseAll() {};
 
 void CloseAll::act(Restaurant &restaurant) {
-    for(int i = 0 ; i < restaurant.getNumOfTables();i++){
+    for(unsigned int i = 0 ; i < (unsigned) restaurant.getNumOfTables();i++){
         if(restaurant.getTable(i)->isOpen()){
             Close c = Close(i) ;
             c.act(restaurant);
@@ -331,6 +332,7 @@ void BackupRestaurant::act(Restaurant &restaurant) {
         backup = new Restaurant(restaurant);
     }
     else {
+        delete backup;
     Restaurant *r  = new Restaurant(restaurant);
     backup = r ;
     }
@@ -379,6 +381,7 @@ std::string BaseAction::getStringStatus() const {
     if(this->getStatus() == COMPLETED){
         return "COMPLETED";
     }
+    return "";
 }
 
 

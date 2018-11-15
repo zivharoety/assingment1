@@ -20,11 +20,11 @@ Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter),
 }
 
 Restaurant::Restaurant(Restaurant &&other): numOfTables(other.numOfTables), open(other.open),tables(other.tables),actionsLog(other.actionsLog) {
-    for(int i = 0 ; i<other.tables.size();i++){
+    for(unsigned int i = 0 ; i<other.tables.size();i++){
 
         other.tables.at(i) = nullptr;
     }
-    for(int i = 0 ; i<other.actionsLog.size();i++){
+    for(unsigned int i = 0 ; i<other.actionsLog.size();i++){
         other.actionsLog.at(i) = nullptr;
     }
     other.clear();
@@ -40,10 +40,10 @@ Restaurant& Restaurant::operator=(Restaurant &&rest) {
     }
     dishcounter = rest.dishcounter;
     customercounter = rest.customercounter;
-    for(int i = 0 ; i<rest.tables.size();i++){
+    for(unsigned int i = 0 ; i<rest.tables.size();i++){
         rest.tables.at(i) = nullptr;
     }
-    for(int i = 0 ; i<rest.actionsLog.size();i++){
+    for(unsigned int i = 0 ; i<rest.actionsLog.size();i++){
         rest.actionsLog.at(i) = nullptr;
     }
     rest.clear();

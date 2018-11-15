@@ -16,7 +16,7 @@ Table& Table::operator=(const Table &other) {
     return *this;
 }
 Table::Table(Table &&other): capacity(other.capacity),open(other.open),customersList(other.customersList) {
-    for(int i = 0 ; i < other.customersList.size() ; i ++){
+    for(unsigned int i = 0 ; i < other.customersList.size() ; i ++){
         other.customersList.at(i) = nullptr ;
     }
 }
@@ -26,7 +26,7 @@ Table& Table::operator=(Table &&other) {
     capacity = other.capacity;
     open = other.open;
     customersList = other.customersList;
-    for(int i = 0 ; i < other.customersList.size() ; i ++){
+    for(unsigned int i = 0 ; i < other.customersList.size() ; i ++){
         other.customersList.at(i) = nullptr ;
     }
 }
@@ -40,7 +40,7 @@ Customer* Table::getCustomer(int id) {
 } // ?!?!?!?!?!?!
 
 void Table::removeCustomer(int id) {
-    for(int i = 0 ; i < customersList.size() ; i++){
+    for(unsigned int i = 0 ; i < customersList.size() ; i++){
         if(customersList.at(i)->getId() == id){
             customersList.erase(customersList.begin()+i);
         }

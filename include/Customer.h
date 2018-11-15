@@ -25,8 +25,8 @@ public:
     void addCardinality() ;
     int getBill() const;
     void addToBill(int b);
-    Customer(const Customer &customer);
-    Customer & operator=(const Customer &customer);
+  //  Customer(const Customer &customer);
+    //Customer & operator=(const Customer &customer);
     const std::vector<Dish> getMyOrder() const;
     void addToMyOrder(Dish d) ;
     virtual ~Customer();
