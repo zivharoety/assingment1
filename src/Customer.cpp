@@ -98,29 +98,32 @@ std::vector<int> VegetarianCustomer::order(const std::vector <Dish> &menu) {
 
             }
         } // searching in the menu
-        toReturn.push_back(min); // to add an if clause ?
-        toReturn.push_back(exp); // same same
-        addToBill(minPrice + expPrice);
-        for (Dish d : menu) {
-            if ((d.getId() == min) || (d.getId() == exp)) {
-                addToMyOrder(d);
+        if ((min < menu.size()) && ((exp < menu.size()) & exp >= 0)) {
+            toReturn.push_back(min); // to add an if clause ?
+            toReturn.push_back(exp); // same same
+            addToBill(minPrice + expPrice);
+            for (Dish d : menu) {
+                if ((d.getId() == min) || (d.getId() == exp)) {
+                    addToMyOrder(d);
 
-            }
-        } // adding the order to the customer log
-
+                }
+            } // adding the order to the customer log
+            addCardinality();
+            printMyCurrOrder(toReturn , menu);
+        }
     }
     else{
         toReturn.push_back(getMyOrder().at(0).getId());
         addToMyOrder(getMyOrder().at(0));
         toReturn.push_back(getMyOrder().at(1).getId());
         addToMyOrder(getMyOrder().at(1));
-
         addToBill(getMyOrder().at(0).getPrice() + getMyOrder().at(1).getPrice()) ;
-
+        addCardinality();
+        printMyCurrOrder(toReturn , menu);
 
     }
-    addCardinality();
-    printMyCurrOrder(toReturn , menu);
+    /*addCardinality();
+    printMyCurrOrder(toReturn , menu);*/
     return toReturn ;
 }
 
@@ -139,22 +142,23 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
         int expID = -1 ;
         int expPrice = 0 ;
         for(Dish d : menu){
-            if((d.getType() == SPC & d.getPrice()> expPrice) || ((d.getType()== SPC) & (d.getPrice()==expPrice) & (d.getId()<expID))){
+            if(((d.getType() == SPC) & (d.getPrice()> expPrice)) || ((d.getType()== SPC) & (d.getPrice()==expPrice) & (d.getId()<expID))){
                 expID = d.getId();
                 expPrice = d.getPrice() ;
             }
         } // searching for the most expensive spicy dish
-        toReturn.push_back(expID); // toReturn
-        addToBill(expPrice); // add to bill
-        for(Dish d : menu){
-            if(d.getId() == expID){
-                addToMyOrder(d); // add to log
+        if(expID!=-1) {
+            toReturn.push_back(expID); // toReturn
+            addToBill(expPrice); // add to bill
+            for (Dish d : menu) {
+                if (d.getId() == expID) {
+                    addToMyOrder(d); // add to log
 
 
+                }
             }
+            addCardinality();
         }
-        addCardinality();
-
     }
     else if(getNumberOfOrder() == 1){
         int bvgID = -1;
@@ -165,14 +169,16 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
                 bvgID = d.getId() ;
             }
         } // searching for ther cheapest non-alcoholic bvg
-        toReturn.push_back(bvgID) ;
-        addToBill(bvgPrice) ;
-        for(Dish d : menu){
-            if(d.getId() == bvgID){
-                addToMyOrder(d); // add to log
-            }
-        } // end loop
-        addCardinality();
+        if(bvgID!=-1) {
+            toReturn.push_back(bvgID);
+            addToBill(bvgPrice);
+            for (Dish d : menu) {
+                if (d.getId() == bvgID) {
+                    addToMyOrder(d); // add to log
+                }
+            } // end loop
+            addCardinality();
+        }
     }
     else{
         Dish toAdd  = getMyOrder().back() ;
@@ -311,7 +317,7 @@ AlchoholicCustomer* AlchoholicCustomer::clone() const {
 void Customer::printMyCurrOrder(const std::vector<int> dishes, const std::vector<Dish> &menu) {
     for(unsigned int id : dishes){
         for(Dish d : menu){
-            if(d.getId() == id){
+            if((unsigned) d.getId() ==  id){
                 std::cout<< getName() << " ordered " << d.getName()<<std::endl ;
             }
         }

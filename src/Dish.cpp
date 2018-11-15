@@ -36,6 +36,7 @@ std::string Dish::getTypeName() {
 	if(getType()==ALC){
 		return "ALC";
 	}
+	return "";
 
 }
 Dish::~Dish() {}

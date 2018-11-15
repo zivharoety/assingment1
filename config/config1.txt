@@ -1,3 +1,4 @@
+#lofvndjvndjk
 #number of tables
 6
 #tables description
@@ -6,7 +7,7 @@
 Butterbeer,ALC,50
 Fire Whisky,ALC,60
 Honey Wine,ALC,80
-Water,BVG,10
-Pumpkin Juice,BVG,40
-Pumpkin Cake,VEG,50
-Spicy Meat,SPC,300
+Water,BVG,20
+Pumpkin juice,BVG,40
+Pumpkin cake,ALC,50
+Spicy meat,ALC,300

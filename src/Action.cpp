@@ -7,7 +7,7 @@
 
 extern Restaurant* backup;
 
-BaseAction::BaseAction():status(PENDING),errorMsg("") {
+BaseAction::BaseAction():errorMsg(""),status(PENDING) {
 }
 
 BaseAction::~BaseAction() {}
@@ -187,8 +187,8 @@ CloseAll::CloseAll() {};
 
 void CloseAll::act(Restaurant &restaurant) {
     for(unsigned int i = 0 ; i < (unsigned) restaurant.getNumOfTables();i++){
-        if(restaurant.getTable(i)->isOpen()){
-            Close c = Close(i) ;
+        if(restaurant.getTable(i)->isOpen()) {
+            Close c = Close(i);
             c.act(restaurant);
         }
     }
@@ -310,7 +310,7 @@ PrintActionsLog* PrintActionsLog::clone() const {
 }
 
 std::string PrintActionsLog::toString() const {
-    return getStringStatus() + getErrorMsg();
+    return "log " + getStringStatus() + getErrorMsg();
 }
 
 BackupRestaurant::BackupRestaurant() {

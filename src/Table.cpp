@@ -2,9 +2,7 @@
 
 
 
-Table::Table(int t_capacity) {
-    capacity = t_capacity;
-}
+Table::Table(int t_capacity): capacity(t_capacity) , open(false) {}
 
 
 Table& Table::operator=(const Table &other) {
@@ -19,6 +17,7 @@ Table::Table(Table &&other): capacity(other.capacity),open(other.open),customers
     for(unsigned int i = 0 ; i < other.customersList.size() ; i ++){
         other.customersList.at(i) = nullptr ;
     }
+
 }
 
 Table& Table::operator=(Table &&other) {
@@ -29,6 +28,7 @@ Table& Table::operator=(Table &&other) {
     for(unsigned int i = 0 ; i < other.customersList.size() ; i ++){
         other.customersList.at(i) = nullptr ;
     }
+    return *this;
 }
 Customer* Table::getCustomer(int id) {
     for(Customer* c : customersList){
@@ -112,17 +112,13 @@ Table::~Table() {
     clear();
 }
 
-std::vector<OrderPair>& Table::getOrders() {
-    std::vector<OrderPair> toReturn;
-    for(Customer* c : customersList){
-        const Customer& temp = *c; //is it copy or assignment
-        for(Dish d : c->getMyOrder()){
-            OrderPair toAdd(c->getId(),d);
-            toReturn.push_back(toAdd);
-        }
 
-    }
-    return toReturn;
+//this function has no use in pur design
+
+
+std::vector<OrderPair>& Table::getOrders() {
+
+    return orderList;
 }
 
 bool Table::isThere(int id)  {

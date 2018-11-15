@@ -6,7 +6,7 @@ Restaurant::Restaurant(const std::string &configFilePath): dishcounter(0),custom
 
 Restaurant::Restaurant(): dishcounter(0),customercounter(0) {}
 
-Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter), customercounter(other.customercounter),open(other.open) {
+Restaurant::Restaurant(const Restaurant &other): open(other.open) ,numOfTables(other.numOfTables), dishcounter(other.dishcounter), customercounter(other.customercounter) {
     for(Table * t : other.tables){
         tables.push_back(t->clone());
     }
@@ -19,7 +19,7 @@ Restaurant::Restaurant(const Restaurant &other): dishcounter(other.dishcounter),
 
 }
 
-Restaurant::Restaurant(Restaurant &&other): numOfTables(other.numOfTables), open(other.open),tables(other.tables),actionsLog(other.actionsLog) {
+Restaurant::Restaurant(Restaurant &&other): open(other.open),numOfTables(other.numOfTables),tables(other.tables),actionsLog(other.actionsLog) {
     for(unsigned int i = 0 ; i<other.tables.size();i++){
 
         other.tables.at(i) = nullptr;
@@ -47,6 +47,7 @@ Restaurant& Restaurant::operator=(Restaurant &&rest) {
         rest.actionsLog.at(i) = nullptr;
     }
     rest.clear();
+    return rest;
 
 }
 
@@ -134,51 +135,42 @@ void Restaurant::readAndSplit(const std::string &configFilePath) {
     std::ifstream file;
     file.open(configFilePath);
     std::string line;
-    int countH =0;
+    int countA = 0;
     int countDishes=1;
-    while (!file.eof()) {
+    while(!file.eof()){
         std::getline(file, line);
-        if (countH==1){
-            numOfTables= std::stoi(line);
-           countH++;
+        if((!file.eof()) && (line.at(0) == '#')){
+        }
+        else{
+            if(countA == 0){
+                numOfTables= std::stoi(line);
+                countA++;
+            }
+            else if(countA==1){
+                Restaurant::setTables(line);
+                countA++;
 
-        }
-        else if (countH==3){
-            Restaurant::setTables(line);
-            countH++;
-
-        }
-        else if (countH>4){
-            Restaurant::setMenu(line,countDishes);
-            countDishes++;
-        }
-       else  if (line.at(0) == '#') {
-            countH++;
+            }
+            else if((!file.eof()) && (countA==2)){
+                Restaurant::setMenu(line,countDishes);
+                countDishes++;
+            }
         }
     }
 }
 
 void Restaurant::setTables(std::string s) {
     int k = 0;
-
-    std::vector<int> cap ;
-
-    while(s.size()>0 & k<numOfTables ){
-        std::string toAdd = s.substr(0,s.find_first_of(','));
-        Table* newTable = new Table(std::stoi(toAdd));
+    while((s.size()>0) & (k<numOfTables)){
+        unsigned int toAdd = (unsigned) std::stoi(s.substr(0,s.find_first_of(',')));
+        Table* newTable = nullptr;
+        newTable = new Table(toAdd);
         tables.push_back(newTable);
-
         s = s.substr(s.find_first_of(',')+1) ;
         k++;
     }
-    while (k!=numOfTables){
-
-
-    }
-
 
 }
-
 
 void Restaurant::setMenu(std::string s , int n) {
     unsigned int i = (s.find_first_of(','));
@@ -197,14 +189,14 @@ const std::vector<BaseAction*>& Restaurant::getActionsLog() const {
     return actionsLog;
 }
 
-DishType Restaurant::stringToType(std::string s)  {
-    if(s=="ALC")
+DishType Restaurant::stringToType(std::string s) {
+    if (s == "ALC")
         return ALC;
-    if(s=="SPC")
+    if (s == "SPC")
         return SPC;
-    if(s=="VEG")
+    if (s == "VEG")
         return VEG;
-    if(s=="BVG")
+    else
         return BVG;
 }
 
@@ -243,9 +235,8 @@ Customer* Restaurant::makeCustomer(int id, std::string name, std::string type) {
         Customer* toReturn = new CheapCustomer(name,id);
         return toReturn;
     }
-    if(type=="veg") {
+    else {
         Customer *toReturn = new VegetarianCustomer(name, id);
-
         return toReturn;
     }
 }
