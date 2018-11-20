@@ -27,6 +27,7 @@ public:
     int getBill();
     bool isOpen();
     void clear();
+    void clearOrders();
     ~Table();
     bool isThere(int id);
 private:

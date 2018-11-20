@@ -15,7 +15,7 @@ Restaurant::Restaurant(const Restaurant &other): open(other.open) ,numOfTables(o
     }
     for(Dish d : other.menu){
         menu.push_back(d);
-    } //to check
+    }
 
 }
 
@@ -139,7 +139,7 @@ void Restaurant::readAndSplit(const std::string &configFilePath) {
     int countDishes=1;
     while(!file.eof()){
         std::getline(file, line);
-        if((!file.eof()) && (line.at(0) == '#')){
+        if((line=="") ||(line.at(0) == '#') || (line=="\r") ||  (line=="\t") || (line=="\n") ||(line==" ") ||line.empty()){
         }
         else{
             if(countA == 0){
@@ -151,7 +151,7 @@ void Restaurant::readAndSplit(const std::string &configFilePath) {
                 countA++;
 
             }
-            else if((!file.eof()) && (countA==2)){
+            else if(countA==2){
                 Restaurant::setMenu(line,countDishes);
                 countDishes++;
             }
@@ -201,20 +201,22 @@ DishType Restaurant::stringToType(std::string s) {
 }
 
 void Restaurant::Aopen(std::string s) {
-    int tableID = std::stoi(s.substr(0,s.find_first_of(' ')));
-    s=s.substr(s.find_first_of(' ')+1);
-    std::vector<Customer*> cl;
-    while(s != ""){
-        std::string name = s.substr(0,s.find_first_of(','));
-        s = s.substr(s.find_first_of(',')+1);
-        std::string c_type = s.substr(0,3);
-        cl.push_back(makeCustomer(customercounter,name,c_type));
+    int tableID = std::stoi(s.substr(0, s.find_first_of(' ')));
+    s = s.substr(s.find_first_of(' ') + 1);
+    std::vector<Customer *> cl;
+    if (s.length() > 1) {
+    while (s != "") {
+        std::string name = s.substr(0, s.find_first_of(','));
+        s = s.substr(s.find_first_of(',') + 1);
+        std::string c_type = s.substr(0, 3);
+        cl.push_back(makeCustomer(customercounter, name, c_type));
         s = s.substr(3);
-        if(s.size()>0 && s.at(0)==' '){
-            s= s.substr(1); //changing string
+        if (s.size() > 0 && s.at(0) == ' ') {
+            s = s.substr(1); //changing string
         }
 
     }
+}
     OpenTable *toOpen = new OpenTable(tableID, cl);
     toOpen->act(*this);
     actionsLog.push_back(toOpen);
@@ -302,3 +304,8 @@ void Restaurant::Arestore() {
     restore->act(*this);
     actionsLog.push_back(restore);
 }
+
+void Restaurant::reduceCounter(int i) {
+    customercounter = customercounter - i ;
+}
+

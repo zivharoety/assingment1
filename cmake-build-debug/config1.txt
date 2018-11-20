@@ -1,4 +1,4 @@
-#lofvndjvndjk
+#Config file 2
 #number of tables
 6
 #tables description
@@ -9,5 +9,5 @@ Fire Whisky,ALC,60
 Honey Wine,ALC,80
 Water,BVG,20
 Pumpkin juice,BVG,40
-Pumpkin cake,ALC,50
-Spicy meat,ALC,300
+Pumpkin cake,VEG,50
+Spicy meat,SPC,300

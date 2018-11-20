@@ -41,22 +41,8 @@ std::string Customer::getType() const {
     return type;
 }
 
- /*Customer& Customer::operator=(const Customer &customer) {
-    if (this != &customer) {
-        this->bill = customer.getBill();
-        this->numberOfOrders = customer.getNumberOfOrder();
-//        myOrder = customer.getMyOrder();
-    }
-    return *this;
-} //not sure it's needed
-*/
-
 Customer::~Customer() {} //no needed
-/*
-Customer::Customer(const Customer &customer):name(customer.getName()),id(customer.getId()),
-numberOfOrders(customer.getNumberOfOrder()),bill(customer.getBill()),
-myOrder(customer.getMyOrder()) {}
-*/
+
 
 
 VegetarianCustomer::VegetarianCustomer(std::string name, int id): Customer(name,id) {
@@ -82,7 +68,10 @@ VegetarianCustomer* VegetarianCustomer::clone() const {
 std::vector<int> VegetarianCustomer::order(const std::vector <Dish> &menu) {
 
     std::vector<int> toReturn;
-    if(getNumberOfOrder()==0) {
+    if((getNumberOfOrder() > 1) & (getMyOrder().empty())){
+        return toReturn;
+    }
+
         int min = INT8_MAX;
         int minPrice = 0;
         int exp = -1;
@@ -92,38 +81,28 @@ std::vector<int> VegetarianCustomer::order(const std::vector <Dish> &menu) {
                 min = d.getId();
                 minPrice = d.getPrice();
             }
-            if ((d.getType() == BVG) & (exp < d.getPrice())) {
+            if ((d.getType() == BVG) & ((expPrice < d.getPrice()) | ((expPrice == d.getPrice()) & (exp > d.getId())) )) {
                 exp = d.getId();
                 expPrice = d.getPrice();
 
             }
         } // searching in the menu
-        if ((min < menu.size()) && ((exp < menu.size()) & exp >= 0)) {
-            toReturn.push_back(min); // to add an if clause ?
-            toReturn.push_back(exp); // same same
-            addToBill(minPrice + expPrice);
-            for (Dish d : menu) {
-                if ((d.getId() == min) || (d.getId() == exp)) {
-                    addToMyOrder(d);
-
-                }
-            } // adding the order to the customer log
-            addCardinality();
-            printMyCurrOrder(toReturn , menu);
+        if((min == INT8_MAX) | (exp ==-1)){
+            return toReturn;
         }
-    }
-    else{
-        toReturn.push_back(getMyOrder().at(0).getId());
-        addToMyOrder(getMyOrder().at(0));
-        toReturn.push_back(getMyOrder().at(1).getId());
-        addToMyOrder(getMyOrder().at(1));
-        addToBill(getMyOrder().at(0).getPrice() + getMyOrder().at(1).getPrice()) ;
-        addCardinality();
-        printMyCurrOrder(toReturn , menu);
+        toReturn.push_back(min); // to add an if clause ?
+        toReturn.push_back(exp); // same same
+        addToBill(minPrice + expPrice);
+        for (Dish d : menu) {
+            if ((d.getId() == min) || (d.getId() == exp)) {
+                addToMyOrder(d);
 
-    }
-    /*addCardinality();
-    printMyCurrOrder(toReturn , menu);*/
+            }
+        } // adding the order to the customer log
+
+
+    addCardinality();
+    printMyCurrOrder(toReturn , menu);
     return toReturn ;
 }
 
@@ -138,6 +117,9 @@ SpicyCustomer::SpicyCustomer(std::string name, int id):Customer(name,id) {
 
 std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
     std::vector<int> toReturn;
+    if((getNumberOfOrder()>0) & (getMyOrder().empty())){
+        return  toReturn;
+    }
     if(getNumberOfOrder() == 0){
         int expID = -1 ;
         int expPrice = 0 ;
@@ -147,18 +129,17 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
                 expPrice = d.getPrice() ;
             }
         } // searching for the most expensive spicy dish
-        if(expID!=-1) {
-            toReturn.push_back(expID); // toReturn
-            addToBill(expPrice); // add to bill
-            for (Dish d : menu) {
-                if (d.getId() == expID) {
-                    addToMyOrder(d); // add to log
+        toReturn.push_back(expID); // toReturn
+        addToBill(expPrice); // add to bill
+        for(Dish d : menu){
+            if(d.getId() == expID){
+                addToMyOrder(d); // add to log
 
 
-                }
             }
-            addCardinality();
         }
+        addCardinality();
+
     }
     else if(getNumberOfOrder() == 1){
         int bvgID = -1;
@@ -169,16 +150,14 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu) {
                 bvgID = d.getId() ;
             }
         } // searching for ther cheapest non-alcoholic bvg
-        if(bvgID!=-1) {
-            toReturn.push_back(bvgID);
-            addToBill(bvgPrice);
-            for (Dish d : menu) {
-                if (d.getId() == bvgID) {
-                    addToMyOrder(d); // add to log
-                }
-            } // end loop
-            addCardinality();
-        }
+        toReturn.push_back(bvgID) ;
+        addToBill(bvgPrice) ;
+        for(Dish d : menu){
+            if(d.getId() == bvgID){
+                addToMyOrder(d); // add to log
+            }
+        } // end loop
+        addCardinality();
     }
     else{
         Dish toAdd  = getMyOrder().back() ;
@@ -227,21 +206,29 @@ CheapCustomer* CheapCustomer::clone() const {
 
 std::vector<int> CheapCustomer::order(const std::vector <Dish> &menu) {
     std::vector<int> toReturn;
-    if(getNumberOfOrder()==0) {
+    if(getNumberOfOrder()>0){
+        return toReturn;
+    }
+    else
+    {
         addCardinality();
         int minPrice = INT8_MAX;
         int minID = 0;
+        bool wasFound = false;
         for (Dish d : menu) {
             if ((d.getPrice() < minPrice) | ((d.getPrice() == minPrice) & (d.getId() < minID))) {
                 minPrice = d.getPrice();
                 minID = d.getId();
+                wasFound = true;
             }
         }
-        toReturn.push_back(minID);
-        addToBill(minPrice);
-        for (Dish d : menu) {
-            if (d.getId() == minID)
-                addToMyOrder(d);
+        if(wasFound) {
+            toReturn.push_back(minID);
+            addToBill(minPrice);
+            for (Dish d : menu) {
+                if (d.getId() == minID)
+                    addToMyOrder(d);
+            }
         }
 
     }
@@ -264,7 +251,7 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu) {
     bool wasFound = false;
     if(getNumberOfOrder()==0) {
         for (Dish d : menu) {
-            if ((d.getType() == ALC) & ((d.getPrice() < minPrice) | ((d.getPrice() == minPrice) & (d.getId() < minID)))) {
+            if ((d.getType() == ALC) & ((d.getPrice() < minPrice) || ((d.getPrice() == minPrice) & (d.getId() < minID)))) {
                 minID = d.getId();
                 minPrice = d.getPrice();
                 wasFound = true;
@@ -273,10 +260,15 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu) {
     }
     else{
         Dish temp = getMyOrder().back();
+        int minID2 = INT8_MAX;
         for(Dish d : menu){
-            if((d.getType() == ALC) && (d.getPrice()>= temp.getPrice()) &
-                    (d.getPrice()<=minPrice) &
-                    (((d.getPrice()==temp.getPrice()) & (d.getId()>temp.getId())) || (d.getPrice()>temp.getPrice()))){
+            if((d.getType() == ALC) && (((d.getPrice()==temp.getPrice()) & (d.getId()>temp.getId()) & (d.getId()<minID2)))){ //|| ((d.getPrice() > temp.getPrice()) & (d.getPrice()<=minPrice)))){
+                minID = d.getId();
+                minID2 = d.getId();
+                minPrice = d.getPrice();
+                wasFound = true;
+            }
+            else if (((d.getType() == ALC) && (!wasFound)) && ((d.getPrice() > temp.getPrice()) & (d.getPrice()<=minPrice))){
                 minID = d.getId();
                 minPrice = d.getPrice();
                 wasFound = true;

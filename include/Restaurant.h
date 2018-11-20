@@ -41,6 +41,7 @@ public:
 	void Abackup();
 	void Arestore();
     Customer* makeCustomer(int id, std::string name,std::string type);
+    void reduceCounter(int i);
 
 private:
     bool open;

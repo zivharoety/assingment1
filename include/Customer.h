@@ -25,16 +25,10 @@ public:
     void addCardinality() ;
     int getBill() const;
     void addToBill(int b);
-  //  Customer(const Customer &customer);
-    //Customer & operator=(const Customer &customer);
     const std::vector<Dish> getMyOrder() const;
     void addToMyOrder(Dish d) ;
     virtual ~Customer();
     void printMyCurrOrder(const std::vector<int> dishes, const std::vector<Dish> &menu);
-
-
-
-
 private:
     std::vector<Dish> myOrder;
     const std::string name;

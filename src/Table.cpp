@@ -45,6 +45,17 @@ void Table::removeCustomer(int id) {
             customersList.erase(customersList.begin()+i);
         }
     }
+    std::vector<OrderPair> temp;
+    for(OrderPair p : orderList){
+        if(p.first != id){
+            temp.push_back(p);
+        }
+
+    }
+    orderList.clear();
+    for(OrderPair p2 : temp){
+        orderList.push_back(p2);
+    }
 
 
 }
@@ -56,8 +67,11 @@ int Table::getCapacity() const {
 void Table::addCustomer(Customer *customer) {
 
     customersList.push_back(customer);
-
+    /*for (Dish d : customer->getMyOrder()) {
+        orderList.push_back(OrderPair(customer->getId(), d));
+    }*/
 }
+
 std::vector<Customer *> & Table::getCustomers() {
 
     return customersList ;
@@ -78,14 +92,21 @@ void Table::closeTable() {
 int Table::getBill() {
     int bill = 0 ;
     for(Customer* c : customersList){
-        bill = bill + c->getBill();
+        bill += c->getBill();
     }
     return bill;
 }
 
 void Table::order(const std::vector <Dish> &menu) {
     for (Customer *c : customersList) {
-    c->order(menu);
+        std::vector<int> toAdd = c->order(menu);
+        for(int i : toAdd){
+            for(Dish d : menu){
+                if(d.getId() == i){
+                   orderList.emplace_back(c->getId(),d);
+                }
+            }
+        }
     }
 }
 
@@ -95,6 +116,9 @@ Table::Table(const Table &table) : capacity(table.capacity), open (table.open){
     for(Customer* c : table.customersList){
         customersList.push_back(c->clone());
     }
+   /* for(OrderPair o : table.orderList){
+        orderList.push_back(o);
+    }*/
 }
 
 
@@ -132,8 +156,15 @@ Table* Table::clone() {
     for(Customer * c : customersList){
         toReturn->addCustomer(c->clone());
     }
+    for(OrderPair o : orderList){
+        toReturn->orderList.push_back(o);
+    }
     return toReturn;
 }
+
+void Table::clearOrders() {
+        orderList.clear();
+    }
 
 
 
